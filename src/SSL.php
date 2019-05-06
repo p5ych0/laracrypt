@@ -4,7 +4,6 @@ namespace P5ych0\Laracrypt;
 
 use InvalidArgumentException;
 use LogicException;
-use ReflectionException;
 use RuntimeException;
 use Illuminate\Contracts\Encryption\EncryptException;
 use Illuminate\Contracts\Encryption\DecryptException;
@@ -34,11 +33,12 @@ class SSL extends Obfuscator
     /**
      * Constructor
      *
+     * @param string $pth Absolute path
      * @throws \RuntimeException
      */
-    public function __construct()
+    public function __construct(string $pth = null)
     {
-        $path = $this->storage() . "/keys";
+        $path = $pth ?? storage_path() . "/keys";
 
         if (!file_exists($path)) {
             mkdir($path, 0750, true);
@@ -255,16 +255,5 @@ class SSL extends Obfuscator
         }
 
         return $this;
-    }
-
-    private function storage()
-    {
-        try {
-            $path = storage_path();
-        } catch (ReflectionException $e) {
-            $path = "/tmp";
-        }
-
-        return $path;
     }
 }
