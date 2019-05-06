@@ -34,8 +34,7 @@ jobs:
       # run tests!
       - run:
           name: Testing
-          working_directory: ./backend
-          command: vendor/bin/phpunit
+          command: phpunit
 
 workflows:
   version: 2
