@@ -1,5 +1,5 @@
 # laracrypt
-Obfuscation and Encryption functionality for Laravel
+[![CircleCI](https://circleci.com/gh/p5ych0/laracrypt/tree/master.svg?style=svg)](https://circleci.com/gh/p5ych0/laracrypt/tree/master) Obfuscation and Encryption functionality for Laravel
 
 Simple usage example:
 
