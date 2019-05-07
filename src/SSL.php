@@ -33,7 +33,7 @@ class SSL extends Obfuscator
     /**
      * Constructor
      *
-     * @param string $pth Absolute path
+     * @param  string            $pth Absolute path
      * @throws \RuntimeException
      */
     public function __construct(string $pth = null)

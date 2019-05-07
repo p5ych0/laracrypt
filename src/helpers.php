@@ -42,3 +42,37 @@ function is_uuid(string $str): bool
 {
     return preg_match("#^[a-f\d]{8}-(?:[a-f\d]{4}-){3}[a-f\d]{12}$#", $str) > 0;
 }
+
+/**
+ * Whether number is prime
+ *
+ * @param  int  $number
+ * @return bool
+ */
+function is_prime(int $number): bool
+{
+    return in_array($number, [2, 3, 5], true) || ($number > 1 && $number % 2 >= 1 && $number % 3 >= 1 && $number % 5 >= 1);
+}
+
+/**
+ * Find next prime number under 100000
+ *
+ * @param  int                        $number
+ * @throws \]InvalidArgumentException
+ * @throws \DomainException
+ * @return int
+ */
+function next_prime(int $number): int
+{
+    if ($number < 0) {
+        throw new InvalidArgumentException("Number must be positive");
+    }
+
+    while (is_prime($number) === false) {
+        if ($number++ > 100000) {
+            throw new DomainException("Only prime numbers in range of 2..100000 are allowed");
+        }
+    }
+
+    return $number;
+}

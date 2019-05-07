@@ -18,6 +18,10 @@ class ObfuscationServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . "/config/obfuscator.php" => config_path("obfuscator.php"),
         ], "config");
+
+        $this->commands([
+            SecureObfuscator::class,
+        ]);
     }
 
     /**
