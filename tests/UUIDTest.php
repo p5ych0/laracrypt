@@ -51,9 +51,8 @@ class UUIDTest extends TestCase
 
     public function testFacadeWorks()
     {
-        \UUIDPRetender::shouldReceive("encrypt")->once()->with(1, 1, 1, 1);
-
-        \UUIDPRetender::encrypt(1, 1, 1, 1);
+        \UUIDPretender::shouldReceive("encrypt")->once()->with(1, 1, 1, 1);
+        \UUIDPretender::encrypt(1, 1, 1, 1);
     }
 
     public function testItCanEncryptInt()

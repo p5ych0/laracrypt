@@ -52,7 +52,6 @@ class SerialTest extends TestCase
     public function testFacadeWorks()
     {
         \SerialNumber::shouldReceive("encrypt")->once()->with(1);
-
         \SerialNumber::encrypt(1);
     }
 

@@ -52,7 +52,6 @@ class WebSafeTest extends TestCase
     public function testFacadeWorks()
     {
         \WebSafe::shouldReceive("encrypt")->once()->with(1);
-
         \WebSafe::encrypt(1);
     }
 
