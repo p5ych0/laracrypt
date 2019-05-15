@@ -9,7 +9,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 /**
  * Class     SSLTest
  */
-class SSLTest extends LaravelTestCase
+class SSLTest extends TestCase
 {
     /* ------------------------------------------------------------------------------------------------
      |  Properties
@@ -45,26 +45,26 @@ class SSLTest extends LaravelTestCase
      | ------------------------------------------------------------------------------------------------
      */
 
-    public function testIt_can_be_instantiated()
+    public function testItCanBeInstantiated()
     {
         $this->assertInstanceOf(SSL::class, $this->obf);
     }
 
-    public function testIt_can_encrypt_string()
+    public function testItCanEncryptString()
     {
         $str = $this->obf->encrypt("string");
 
         $this->assertIsString($str);
     }
 
-    public function testIt_can_encrypt_scalar()
+    public function testItCanEncryptScalar()
     {
         $str = $this->obf->encrypt(12345);
 
         $this->assertIsString($str);
     }
 
-    public function testIt_can_encrypt_array()
+    public function testItCanEncryptArray()
     {
         $str = $this->obf->encrypt(["my" => "array", [1, 2, 3]]);
 
@@ -75,14 +75,14 @@ class SSLTest extends LaravelTestCase
      * @dataProvider decryptionProvider
      * @param mixed $v
      */
-    public function testIt_can_decrypt($v)
+    public function testItCanDecrypt($v)
     {
         $e = $this->obf->encrypt($v);
 
         $this->assertSame($v, $this->obf->decrypt($e));
     }
 
-    public function testIt_must_throw_cant_encrypt()
+    public function testItMustThrowCantEncrypt()
     {
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Can't open private key");
@@ -91,7 +91,7 @@ class SSLTest extends LaravelTestCase
         $ssl->encrypt(false);
     }
 
-    public function testIt_must_throw_cant_decrypt()
+    public function testItMustThrowCantDecrypt()
     {
         $this->expectException(DecryptException::class);
         $this->expectExceptionMessage("Cannot be processed");
@@ -99,7 +99,7 @@ class SSLTest extends LaravelTestCase
         $this->obf->decrypt("weird");
     }
 
-    public function testIt_must_throw_failed_decrypt()
+    public function testItMusThrowFailedDecrypt()
     {
         $this->expectException(DecryptException::class);
         $this->expectExceptionMessage("Failed to decrypt data");

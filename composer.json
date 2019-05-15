@@ -28,11 +28,17 @@
         }
     },
     "require-dev": {
-        "orchestra/testbench": "^3.5",
-        "phpunit/phpcov": "^6.0"
+        "orchestra/testbench": "~3.5",
+        "mockery/mockery": "^1.2"
     },
     "extra": {
         "laravel": {
+            "aliases": {
+                "UUIDPretender": "P5ych0\\Laracrypt\\Facades\\UUID",
+                "Shortener": "P5ych0\\Laracrypt\\Facades\\Shortener",
+                "SerialNumber": "P5ych0\\Laracrypt\\Facades\\Serial",
+                "WebSafe": "P5ych0\\Laracrypt\\Facades\\Aes256"
+            },
             "providers": [
                 "P5ych0\\Laracrypt\\ObfuscationServiceProvider"
             ]

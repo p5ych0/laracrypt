@@ -29,7 +29,7 @@ class SerialTest extends TestCase
     {
         parent::setUp();
 
-        $this->obf = new Feistel($this->config["fmode"], $this->config["fmask"], $this->config["fkey"]);
+        $this->obf = $this->app["obfuscate.serial"];
     }
 
     public function tearDown(): void
@@ -44,19 +44,26 @@ class SerialTest extends TestCase
      | ------------------------------------------------------------------------------------------------
      */
 
-    public function testIt_can_be_instantiated()
+    public function testItCanBeInstantiated()
     {
         $this->assertInstanceOf(Feistel::class, $this->obf);
     }
 
-    public function testIt_can_encrypt_int()
+    public function testFacadeWorks()
+    {
+        \SerialNumber::shouldReceive("encrypt")->once()->with(1);
+
+        \SerialNumber::encrypt(1);
+    }
+
+    public function testItCanEncryptInt()
     {
         $str = $this->obf->encrypt(1);
 
         $this->assertRegExp("#^[A-Z]{3}\s+\d{8}$#", $str);
     }
 
-    public function testIt_cant_encrypt_non_int()
+    public function testItCantEncryptNonInt()
     {
         $this->expectException(EncryptException::class);
         $this->expectExceptionMessage("Value must be positive integer");
@@ -64,7 +71,7 @@ class SerialTest extends TestCase
         $this->obf->encrypt("string");
     }
 
-    public function testIt_cant_encrypt_non_positive()
+    public function testItCantEncryptNonPositive()
     {
         $this->expectException(EncryptException::class);
         $this->expectExceptionMessage("Value must be positive integer");
@@ -72,7 +79,7 @@ class SerialTest extends TestCase
         $this->obf->encrypt(-123450);
     }
 
-    public function testIt_cant_encrypt_zero()
+    public function testItCantEncryptZero()
     {
         $this->expectException(EncryptException::class);
         $this->expectExceptionMessage("Value must be positive integer");
@@ -80,7 +87,7 @@ class SerialTest extends TestCase
         $this->obf->encrypt(0);
     }
 
-    public function testIt_cant_encrypt_big()
+    public function testItCantEncryptBig()
     {
         $this->expectException(EncryptException::class);
         $this->expectExceptionMessage("Value must be lesser than or equal to 68719476735");
@@ -88,7 +95,7 @@ class SerialTest extends TestCase
         $this->obf->encrypt(68719476736);
     }
 
-    public function testIt_should_return_max()
+    public function testItShouldReturnMax()
     {
         $chars = $this->obf->getMax(true);
         $val   = $this->obf->getMax(false);
@@ -103,14 +110,14 @@ class SerialTest extends TestCase
      * @dataProvider decryptionProvider
      * @param mixed $v
      */
-    public function testIt_can_decrypt($v)
+    public function testItCanDecrypt($v)
     {
         $e = $this->obf->encrypt($v);
 
         $this->assertSame($this->obf->decrypt($e), $v);
     }
 
-    public function testIt_must_throw_cant_decrypt()
+    public function testItMustThrowCantDecrypt()
     {
         $this->expectException(DecryptException::class);
         $this->expectExceptionMessage("Malformed input");

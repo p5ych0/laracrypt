@@ -29,7 +29,7 @@ class UUIDTest extends TestCase
     {
         parent::setUp();
 
-        $this->obf = new UUID($this->config["cipher"], $this->config["pass"], $this->config["iv"]);
+        $this->obf = $this->app["obfuscate.uuid"];
     }
 
     public function tearDown(): void
@@ -44,19 +44,26 @@ class UUIDTest extends TestCase
      | ------------------------------------------------------------------------------------------------
      */
 
-    public function testIt_can_be_instantiated()
+    public function testItCanBeInstantiated()
     {
         $this->assertInstanceOf(UUID::class, $this->obf);
     }
 
-    public function testIt_can_encrypt_int()
+    public function testFacadeWorks()
+    {
+        \UUIDPRetender::shouldReceive("encrypt")->once()->with(1, 1, 1, 1);
+
+        \UUIDPRetender::encrypt(1, 1, 1, 1);
+    }
+
+    public function testItCanEncryptInt()
     {
         $str = $this->obf->encrypt(165834549);
 
         $this->assertTrue(is_uuid($str));
     }
 
-    public function testIt_cant_encrypt_non_int()
+    public function testItCantEncryptNonInt()
     {
         $this->expectException(EncryptException::class);
         $this->expectExceptionMessage("Value must be positive integer");
@@ -64,7 +71,7 @@ class UUIDTest extends TestCase
         $this->obf->encrypt("string");
     }
 
-    public function testIt_cant_encrypt_non_positive()
+    public function testItCantEncryptNonPositive()
     {
         $this->expectException(EncryptException::class);
         $this->expectExceptionMessage("Value must be positive integer");
@@ -72,7 +79,7 @@ class UUIDTest extends TestCase
         $this->obf->encrypt(-123450);
     }
 
-    public function testIt_cant_encrypt_zero()
+    public function testItCantEncryptZero()
     {
         $this->expectException(EncryptException::class);
         $this->expectExceptionMessage("Value must be positive integer");
@@ -84,14 +91,14 @@ class UUIDTest extends TestCase
      * @dataProvider decryptionProvider
      * @param mixed $v
      */
-    public function testIt_can_decrypt($v)
+    public function testItCanDecrypt($v)
     {
         $e = $this->obf->encrypt(...array_values($v));
 
         $this->assertSame($this->obf->decrypt($e), $v);
     }
 
-    public function testIt_must_throw_cant_decrypt()
+    public function testItMustThrowCantDecrypt()
     {
         $this->expectException(DecryptException::class);
         $this->expectExceptionMessage("Can't decrypt int");
@@ -99,7 +106,7 @@ class UUIDTest extends TestCase
         $this->obf->decrypt("45f160b5-9320-621e-f911-c909ff126ea9");
     }
 
-    public function testIt_must_throw_malformed()
+    public function testItMustThrowMalformed()
     {
         $this->expectException(DecryptException::class);
         $this->expectExceptionMessage("Malformed input");

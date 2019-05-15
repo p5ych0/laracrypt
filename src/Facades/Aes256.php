@@ -24,20 +24,22 @@
  * THE SOFTWARE.
  */
 
-namespace P5ych0\Laracrypt;
+namespace P5ych0\Laracrypt\Facades;
+
+use Illuminate\Support\Facades\Facade;
 
 /**
- * Default interface for Obfuscation
+ * WebSafe encryptor (Aes256 algo)
  *
+ * @see \P5ych0\Laracrypt\Aes256
+ * @method string encrypt(mixed $data) Encrypt the value into web-safe string
+ * @method mixed decrypt(string $encrypted) Decrypt web-safe string
  * @author Kostiantyn Karnasevych <constantine.karnacevych@gmail.com>
  */
-interface Obfuscation
+class Aes256 extends Facade
 {
-    /**
-     * Decrypt the encrypted string
-     *
-     * @param  string $encrypted
-     * @return mixed
-     */
-    public function decrypt(string $encrypted);
+    protected static function getFacadeAccessor()
+    {
+        return "encrypt.websafe";
+    }
 }

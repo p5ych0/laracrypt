@@ -1,14 +1,44 @@
 <?php
 
+/*
+ * The MIT License
+ *
+ * Copyright 2019 Kostiantyn Karnasevych <constantine.karnacevych@gmail.com>.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 namespace P5ych0\Laracrypt;
 
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
 
+/**
+ * Laravel command to generate required keys used with obfuscators/encryptors
+ *
+ * @author Kostiantyn Karnasevych <constantine.karnacevych@gmail.com>
+ */
 class SecureObfuscator extends Command
 {
     use ConfirmableTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -28,6 +58,9 @@ class SecureObfuscator extends Command
      */
     protected $force = false;
 
+    /**
+     * @var array
+     */
     protected $keys = [
         "key"    => "APP_KEY",
         "pass"   => "OBFUSCATOR_PASS",
@@ -50,22 +83,30 @@ class SecureObfuscator extends Command
         $contents    = file_get_contents($envFilePath);
         $init        = null;
 
+        $this->alert("Once keys are regenerated, the values created using the old ones cannot be deobfuscated/decrypted");
+
         foreach ($this->keys as $section => $key) {
             $old = $this->getOldValue($contents, $key);
 
             if ($this->confirmToProceed()) {
-                if (empty($old) || !empty($old) && $this->confirm("Would you like to replace $key=$old?")) {
+                if (empty($old) || !empty($old) && $this->confirm("Would you like to replace ${key}=${old}?")) {
                     $init = $this->{"createNew" . ucfirst($section)}($init);
                 }
             }
         }
     }
 
+    /**
+     * @internal Default API KEY
+     */
     protected function createNewKey()
     {
         $this->call("key:generate");
     }
 
+    /**
+     * @see \P5ych0\Laracrypt\UUID
+     */
     protected function createNewPass()
     {
         if ($this->confirm("Do you want to enter a password?")) {
@@ -77,6 +118,9 @@ class SecureObfuscator extends Command
         $this->call("env:set", ["key" => "obfuscator_pass", "value" => hash("sha256", $inp)]);
     }
 
+    /**
+     * @see \P5ych0\Laracrypt\UUID
+     */
     protected function createNewIv()
     {
         if ($this->confirm("Do you want to enter a phrase for IV?")) {
@@ -88,6 +132,9 @@ class SecureObfuscator extends Command
         $this->call("env:set", ["key" => "obfuscator_iv", "value" => substr(hash("sha256", $inp), 0, 16)]);
     }
 
+    /**
+     * @see \P5ych0\Laracrypt\Shortener
+     */
     protected function createNewChars()
     {
         $inp = $this->ask("Please enter a set of chars to use with shortener", "0123456789ABCDEFHabcdefghijklmnopqrstuvwxyz");
@@ -95,6 +142,9 @@ class SecureObfuscator extends Command
         $this->call("env:set", ["key" => "obfuscator_chars", "value" => str_shuffle($inp)]);
     }
 
+    /**
+     * @see \P5ych0\Laracrypt\Shortener
+     */
     protected function createNewSimple()
     {
         $this->info("The bigger the number the longer the initial value");
@@ -113,6 +163,9 @@ class SecureObfuscator extends Command
         $this->call("env:set", ["key" => "obfuscator_simple", "value" => $inp]);
     }
 
+    /**
+     * @see \P5ych0\Laracrypt\Shortener
+     */
     protected function createNewAdd()
     {
         $this->info("The bigger the number the longer the initial value");
@@ -137,6 +190,9 @@ class SecureObfuscator extends Command
         $this->call("env:set", ["key" => "obfuscator_add", "value" => $inp]);
     }
 
+    /**
+     * @see \P5ych0\Laracrypt\Feistel
+     */
     protected function createNewFmode()
     {
         $inp = $this->confirm("Use letter in serial numbers", true);
@@ -144,7 +200,13 @@ class SecureObfuscator extends Command
         $this->call("env:set", ["key" => "feistel_mode", "value" => $inp ? "true" : "false"]);
     }
 
-    protected function createNewFmask()
+    /**
+     * @internal Generates mask to use with Serial
+     * @see \P5ych0\Laracrypt\Feistel
+     * @throws \Exception
+     * @return int
+     */
+    protected function createNewFmask(): int
     {
         $mask = "3FFFF";
 
@@ -179,7 +241,13 @@ class SecureObfuscator extends Command
         return $im;
     }
 
-    protected function createNewFkey($mask)
+    /**
+     * @internal Generates key to use with Serial
+     * @see \P5ych0\Laracrypt\Feistel
+     * @param  int               $mask
+     * @throws \RuntimeException
+     */
+    protected function createNewFkey(int $mask)
     {
         $key    = "DC1FA093";
         $min    = ($mask + 1) / 2 - 1;
@@ -210,6 +278,9 @@ class SecureObfuscator extends Command
         $this->call("env:set", ["key" => "feistel_key", "value" => $im]);
     }
 
+    /**
+     * @see \P5ych0\Laracrypt\SSL
+     */
     protected function createNewSsl()
     {
         $inp = $this->confirm("Use SSL encryption", true);

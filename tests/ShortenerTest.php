@@ -29,7 +29,7 @@ class ShortenerTest extends TestCase
     {
         parent::setUp();
 
-        $this->obf = new Shortener($this->config["chars"], $this->config["simple"], $this->config["add"]);
+        $this->obf = $this->app["obfuscate.shortener"];
     }
 
     public function tearDown(): void
@@ -44,19 +44,25 @@ class ShortenerTest extends TestCase
      | ------------------------------------------------------------------------------------------------
      */
 
-    public function testIt_can_be_instantiated()
+    public function testItCanBeInstantiated()
     {
         $this->assertInstanceOf(Shortener::class, $this->obf);
     }
 
-    public function testIt_can_encrypt_int()
+    public function testFacadeWorks()
+    {
+        \Shortener::shouldReceive("encrypt")->once()->with(1);
+        \Shortener::encrypt(1);
+    }
+
+    public function testItCanEncryptInt()
     {
         $str = $this->obf->encrypt(165834549);
 
-        $this->assertRegExp("#^[{$this->config["chars"]}]{3,10}$#", $str);
+        $this->assertRegExp("#^[{$this->app["config"]->get("obfuscator.chars")}]{3,10}$#", $str);
     }
 
-    public function testIt_cant_encrypt_non_int()
+    public function testItCantEncryptNonInt()
     {
         $this->expectException(EncryptException::class);
         $this->expectExceptionMessage("Value must be positive integer");
@@ -64,7 +70,7 @@ class ShortenerTest extends TestCase
         $this->obf->encrypt("string");
     }
 
-    public function testIt_cant_encrypt_non_positive()
+    public function testItCantEncryptNonPositive()
     {
         $this->expectException(EncryptException::class);
         $this->expectExceptionMessage("Value must be positive integer");
@@ -72,7 +78,7 @@ class ShortenerTest extends TestCase
         $this->obf->encrypt(-123450);
     }
 
-    public function testIt_cant_encrypt_zero()
+    public function testItCantEncryptZero()
     {
         $this->expectException(EncryptException::class);
         $this->expectExceptionMessage("Value must be positive integer");
@@ -80,7 +86,7 @@ class ShortenerTest extends TestCase
         $this->obf->encrypt(0);
     }
 
-    public function testIt_cant_encrypt_big()
+    public function testItCantEncryptBig()
     {
         $this->expectException(EncryptException::class);
         $this->expectExceptionMessage("Value must be lesser than or equal to 212765935319097");
@@ -92,14 +98,14 @@ class ShortenerTest extends TestCase
      * @dataProvider decryptionProvider
      * @param mixed $v
      */
-    public function testIt_can_decrypt($v)
+    public function testItCanDecrypt($v)
     {
         $e = $this->obf->encrypt($v);
 
         $this->assertSame($this->obf->decrypt($e), $v);
     }
 
-    public function testIt_must_throw_cant_decrypt()
+    public function testItMustThrowCantDecrypt()
     {
         $this->expectException(DecryptException::class);
         $this->expectExceptionMessage("Can't deobfuscate value");
@@ -107,7 +113,7 @@ class ShortenerTest extends TestCase
         $this->obf->decrypt("weird");
     }
 
-    public function testIt_must_throw_malformed()
+    public function testItMustThrowMalformed()
     {
         $this->expectException(DecryptException::class);
         $this->expectExceptionMessage("Malformed input");

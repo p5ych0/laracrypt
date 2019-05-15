@@ -29,7 +29,7 @@ class WebSafeTest extends TestCase
     {
         parent::setUp();
 
-        $this->obf = new Aes256($this->config["key"], $this->config["cipher"]);
+        $this->obf = $this->app["encrypt.websafe"];
     }
 
     public function tearDown(): void
@@ -44,26 +44,33 @@ class WebSafeTest extends TestCase
      | ------------------------------------------------------------------------------------------------
      */
 
-    public function testIt_can_be_instantiated()
+    public function testItCanBeInstantiated()
     {
         $this->assertInstanceOf(Aes256::class, $this->obf);
     }
 
-    public function testIt_can_encrypt_string()
+    public function testFacadeWorks()
+    {
+        \WebSafe::shouldReceive("encrypt")->once()->with(1);
+
+        \WebSafe::encrypt(1);
+    }
+
+    public function testItCanEncryptString()
     {
         $str = $this->obf->encrypt("string");
 
         $this->assertIsString($str);
     }
 
-    public function testIt_can_encrypt_scalar()
+    public function testItCanEncryptScalar()
     {
         $str = $this->obf->encrypt(12345);
 
         $this->assertIsString($str);
     }
 
-    public function testIt_can_encrypt_array()
+    public function testItCanEncryptArray()
     {
         $str = $this->obf->encrypt(["my" => "array", [1, 2, 3]]);
 
@@ -74,14 +81,14 @@ class WebSafeTest extends TestCase
      * @dataProvider decryptionProvider
      * @param mixed $v
      */
-    public function testIt_can_decrypt($v)
+    public function testItCanDecrypt($v)
     {
         $e = $this->obf->encrypt($v);
 
         $this->assertSame($v, $this->obf->decrypt($e));
     }
 
-    public function testIt_must_throw_cant_encrypt()
+    public function testItMustThrowCantEncrypt()
     {
         $this->expectException(EncryptException::class);
         $this->expectExceptionMessage("Can't encrypt FALSE");
@@ -89,7 +96,7 @@ class WebSafeTest extends TestCase
         $this->obf->encrypt(false);
     }
 
-    public function testIt_must_throw_cant_decrypt()
+    public function testItMustThrowCantDecrypt()
     {
         $this->expectException(DecryptException::class);
         $this->expectExceptionMessage("Can't decrypt");

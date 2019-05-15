@@ -24,20 +24,22 @@
  * THE SOFTWARE.
  */
 
-namespace P5ych0\Laracrypt;
+namespace P5ych0\Laracrypt\Facades;
+
+use Illuminate\Support\Facades\Facade;
 
 /**
- * Default interface for Obfuscation
+ * UUID a facade to UUID pretender
  *
+ * @see \P5ych0\Laracrypt\UUID
+ * @method string encrypt(mixed $data, int $value = null, int $owner = 0, int $flag = 0) Encrypt the values into UUID-like string
+ * @method int[] decrypt(string $encrypted) Decrypt UUID-pretending string
  * @author Kostiantyn Karnasevych <constantine.karnacevych@gmail.com>
  */
-interface Obfuscation
+class UUID extends Facade
 {
-    /**
-     * Decrypt the encrypted string
-     *
-     * @param  string $encrypted
-     * @return mixed
-     */
-    public function decrypt(string $encrypted);
+    protected static function getFacadeAccessor()
+    {
+        return "obfuscate.uuid";
+    }
 }

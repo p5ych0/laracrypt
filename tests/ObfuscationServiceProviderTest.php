@@ -7,7 +7,7 @@ use P5ych0\Laracrypt\ObfuscationServiceProvider;
 /**
  * Class     ObfuscationrServiceProviderTest
  */
-class ObfuscationServiceProviderTest extends LaravelTestCase
+class ObfuscationServiceProviderTest extends TestCase
 {
     /* ------------------------------------------------------------------------------------------------
      |  Properties
@@ -25,6 +25,8 @@ class ObfuscationServiceProviderTest extends LaravelTestCase
     {
         parent::setUp();
 
+        $this->refreshApplication();
+
         $this->provider = $this->app->getProvider(ObfuscationServiceProvider::class);
     }
 
@@ -40,7 +42,7 @@ class ObfuscationServiceProviderTest extends LaravelTestCase
      | ------------------------------------------------------------------------------------------------
      */
 
-    public function testIt_can_provides()
+    public function testItProvides()
     {
         $expected = ["obfuscate.uuid", "obfuscate.shortener", "encrypt.websafe", "obfuscate.serial", "encrypt.ssl"];
 

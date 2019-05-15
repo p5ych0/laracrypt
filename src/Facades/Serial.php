@@ -24,20 +24,22 @@
  * THE SOFTWARE.
  */
 
-namespace P5ych0\Laracrypt;
+namespace P5ych0\Laracrypt\Facades;
+
+use Illuminate\Support\Facades\Facade;
 
 /**
- * Default interface for Obfuscation
+ * Serial Number (obfuscator)
  *
+ * @see \P5ych0\Laracrypt\Feistel
+ * @method string encrypt(int $data) Encrypt the value a serial number looking string
+ * @method int decrypt(string $encrypted) Decrypt a serial number looking string
  * @author Kostiantyn Karnasevych <constantine.karnacevych@gmail.com>
  */
-interface Obfuscation
+class Serial extends Facade
 {
-    /**
-     * Decrypt the encrypted string
-     *
-     * @param  string $encrypted
-     * @return mixed
-     */
-    public function decrypt(string $encrypted);
+    protected static function getFacadeAccessor()
+    {
+        return "obfuscate.serial";
+    }
 }
