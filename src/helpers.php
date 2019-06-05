@@ -35,8 +35,8 @@ if (!function_exists("safeBase64")) {
     function safeBase64(string $str, bool $in = true)
     {
         return $in ?
-            strtr(base64_encode($str), ['=' => ';', '/' => '-', '+' => '_']) :
-            base64_decode(strtr($str, ['-' => '/', '_' => '+', ';' => '=']), true);
+            strtr(base64_encode($str), ['=' => '*', '/' => '-', '+' => '_']) :
+            base64_decode(strtr($str, ['-' => '/', '_' => '+', '*' => '=']), true);
     }
 }
 
