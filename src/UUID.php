@@ -126,7 +126,7 @@ class UUID extends Obfuscator
             )
         );
 
-        if ($ret['id'] < 1) {
+        if (empty($ret) || $ret['id'] < 1) {
             throw new DecryptException("Can't decrypt int");
         }
 
