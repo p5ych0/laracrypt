@@ -10,6 +10,9 @@
     processIsolation="false"
     stopOnFailure="true"
     xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+  <php>
+    <env name="APP_KEY" value="base64:+wAzEKI0D5eOsSwqtnIPTQs8uRirBzo1AbpdZ6QczX8="/>
+  </php>
   <coverage>
     <include>
       <directory suffix=".php">./src/</directory>

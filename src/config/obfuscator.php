@@ -3,7 +3,7 @@
 return [
     "cipher" => "AES-256-CBC",
 
-    "key"    => env("APP_KEY", "base64:+wAzEKI0D5eOsSwqtnIPTQs8uRirBzo1AbpdZ6QczX8="),
+    "key"    => env("APP_KEY"),
     "pass"   => env("OBFUSCATOR_PASS", hash("sha256", "My Secret Pass")),
     "iv"     => env("OBFUSCATOR_IV", substr(hash("sha256", "Secret vector (IV)"), 0, 16)),
 
