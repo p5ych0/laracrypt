@@ -88,7 +88,7 @@ if (!function_exists("next_prime")) {
     /**
      * Find next prime number under 100000
      *
-     * @param  int                        $number
+     * @param  int                       $number
      * @throws \InvalidArgumentException
      * @throws \DomainException
      * @return int

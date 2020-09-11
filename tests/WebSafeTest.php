@@ -67,7 +67,7 @@ class WebSafeTest extends TestCase
         $str = $this->obf->encrypt(["some" => "string"]);
 
         $this->assertSame(urlencode($str), $str);
-        $this->assertRegExp("#^[\w*-]+$#", $str);
+        $this->assertMatchesRegularExpression("#^[\w*-]+$#", $str);
     }
 
     public function testItCanEncryptScalar()

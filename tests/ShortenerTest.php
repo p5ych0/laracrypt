@@ -59,7 +59,7 @@ class ShortenerTest extends TestCase
     {
         $str = $this->obf->encrypt(165834549);
 
-        $this->assertRegExp("#^[{$this->app["config"]->get("obfuscator.chars")}]{3,10}$#", $str);
+        $this->assertMatchesRegularExpression("#^[{$this->app["config"]->get("obfuscator.chars")}]{3,10}$#", $str);
     }
 
     public function testItCantEncryptNonInt()

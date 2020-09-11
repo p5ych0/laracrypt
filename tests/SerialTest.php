@@ -59,7 +59,7 @@ class SerialTest extends TestCase
     {
         $str = $this->obf->encrypt(1);
 
-        $this->assertRegExp("#^[A-Z]{3}\s+\d{8}$#", $str);
+        $this->assertMatchesRegularExpression("#^[A-Z]{3}\s+\d{8}$#", $str);
     }
 
     public function testItCantEncryptNonInt()
